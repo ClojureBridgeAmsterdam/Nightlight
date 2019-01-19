@@ -36,10 +36,10 @@
   '[adzerk.boot-reload :refer [reload]])
 
 (task-options!
-  pom {:project 'nightlight
+  pom {:project 'clojurebridge-nightlight
        :version "2.4.1-SNAPSHOT"
        :description "An embedded Clojure editor"
-       :url "https://github.com/oakes/Nightlight"
+       :url "https://github.com/clojurebridge/nightlight"
        :license {"Public Domain" "http://unlicense.org/UNLICENSE"}}
   push {:repo "clojars"}
   sift {:include #{#"nightlight-public/main.out"}
@@ -70,4 +70,3 @@
       (instrument)
       ((resolve 'dev-start) {:port 4000 :url "http://localhost:4000" :main 'nightlight.core}))
     (target)))
-
