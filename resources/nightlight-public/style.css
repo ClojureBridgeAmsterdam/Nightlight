@@ -85,3 +85,11 @@ li {
     right: 0px;
     bottom: 0px;
 }
+.doc {
+  display: none;
+  color: black;
+  background-color: white;
+}
+.doc-wrapper:hover .doc {
+  display: block;
+}

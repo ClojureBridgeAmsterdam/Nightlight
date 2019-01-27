@@ -145,8 +145,9 @@
      [ui/menu-item {:on-click #(swap! s/runtime-state assoc :dialog :delete :node node)}
       "Delete"]]))
 
-(defn node->element [editable? {:keys [nested-items] :as node}]
-  (let [node (cond
+(defn node->element [editable? {:keys [nested-items arglists doc] :as node}]
+  (let [node (dissoc node :arglists :doc)
+        node (cond
                (seq nested-items)
                (assoc node :nested-items (->> nested-items
                                               (sort-by :primary-text)
@@ -156,7 +157,12 @@
                (assoc node :right-icon-button (icon-button node))
                :else
                node)]
-    (r/as-element [ui/list-item node])))
+    (r/as-element [:div.doc-wrapper
+                   [ui/list-item node]
+                   [:div.doc
+                    [:i (apply str (interpose ", " arglists))]
+                    [:br]
+                    [:span  doc]]])))
 
 (defn tree [mui-theme
             {:keys [nodes options] :as runtime-state}
@@ -234,14 +240,14 @@
          [ui/mui-theme-provider
           {:mui-theme mui-theme}
           (into
-            [ui/selectable-list
-             {:on-change (fn [event value]
-                           (when-let [info (psd/get-completion-info)]
-                             (select-completion (c/get-object editor) info value)
-                             (refresh-completions (c/get-extension editor) (c/get-completions editor))))}]
-            (let [bg-color (if (= :light theme) "rgba(0, 0, 0, 0.2)" "rgba(255, 255, 255, 0.2)")]
-              (map (partial node->element false)
-                (assoc-in comps [0 :style :background-color] bg-color))))]]))))
+           [ui/selectable-list
+            {:on-change (fn [event value]
+                          (when-let [info (psd/get-completion-info)]
+                            (select-completion (c/get-object editor) info value)
+                            (refresh-completions (c/get-extension editor) (c/get-completions editor))))}]
+           (let [bg-color (if (= :light theme) "rgba(0, 0, 0, 0.2)" "rgba(255, 255, 255, 0.2)")]
+             (map (partial node->element false)
+                  (assoc-in comps [0 :style :background-color] bg-color))))]]))))
 
 (defn toolbar [mui-theme
                {:keys [editors options new-prefs] :as runtime-state}
@@ -356,4 +362,3 @@
                         :display (if (= selection c/cljs-repl-path) "block" "none")}
                 :src (when (= js/window.self js/window.top)
                        (:url options))}]]]))
-

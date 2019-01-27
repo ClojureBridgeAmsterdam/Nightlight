@@ -56,4 +56,3 @@
       (doseq [file (array-seq (.-files form))]
         (.append form-data "files" file (.-name file)))
       (.send XhrIo "new-file-upload" cb "POST" form-data))))
-
