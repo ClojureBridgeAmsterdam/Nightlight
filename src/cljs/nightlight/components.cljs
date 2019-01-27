@@ -145,14 +145,16 @@
      [ui/menu-item {:on-click #(swap! s/runtime-state assoc :dialog :delete :node node)}
       "Delete"]]))
 
-(defn node->doc [{:keys [arglists doc] :as node}]
-  (let [node (dissoc node :arglists :doc)]
-    (r/as-element [:div.doc-wrapper
-                   [ui/list-item node]
-                   [:div.doc
-                    [:i (apply str (interpose ", " arglists))]
-                    [:br]
-                    [:span  doc]]])))
+(defn node->doc [{:keys [arglists doc value] :as node}]
+  (r/as-element [ui/list-item
+                 [:div.doc-wrapper
+                  value
+                  [:br]
+                  [:br]
+                  [:div.doc
+                   [:i (apply str (interpose ", " arglists))]
+                   [:br]
+                   [:span doc]]]]))
 
 (defn node->element [editable? {:keys [nested-items] :as node}]
   (let [node (cond
