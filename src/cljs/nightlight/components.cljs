@@ -145,9 +145,17 @@
      [ui/menu-item {:on-click #(swap! s/runtime-state assoc :dialog :delete :node node)}
       "Delete"]]))
 
-(defn node->element [editable? {:keys [nested-items arglists doc] :as node}]
-  (let [node (dissoc node :arglists :doc)
-        node (cond
+(defn node->doc [{:keys [arglists doc] :as node}]
+  (let [node (dissoc node :arglists :doc)]
+    (r/as-element [:div.doc-wrapper
+                   [ui/list-item node]
+                   [:div.doc
+                    [:i (apply str (interpose ", " arglists))]
+                    [:br]
+                    [:span  doc]]])))
+
+(defn node->element [editable? {:keys [nested-items] :as node}]
+  (let [node (cond
                (seq nested-items)
                (assoc node :nested-items (->> nested-items
                                               (sort-by :primary-text)
@@ -157,12 +165,7 @@
                (assoc node :right-icon-button (icon-button node))
                :else
                node)]
-    (r/as-element [:div.doc-wrapper
-                   [ui/list-item node]
-                   [:div.doc
-                    [:i (apply str (interpose ", " arglists))]
-                    [:br]
-                    [:span  doc]]])))
+    (r/as-element [ui/list-item node])))
 
 (defn tree [mui-theme
             {:keys [nodes options] :as runtime-state}
@@ -246,7 +249,7 @@
                             (select-completion (c/get-object editor) info value)
                             (refresh-completions (c/get-extension editor) (c/get-completions editor))))}]
            (let [bg-color (if (= :light theme) "rgba(0, 0, 0, 0.2)" "rgba(255, 255, 255, 0.2)")]
-             (map (partial node->element false)
+             (map node->doc
                   (assoc-in comps [0 :style :background-color] bg-color))))]]))))
 
 (defn toolbar [mui-theme
