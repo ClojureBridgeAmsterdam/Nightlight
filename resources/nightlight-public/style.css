@@ -87,8 +87,6 @@ li {
 }
 .doc {
   display: none;
-  color: black;
-  background-color: white;
 }
 .doc-wrapper:hover .doc {
   display: block;

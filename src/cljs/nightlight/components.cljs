@@ -147,14 +147,13 @@
 
 (defn node->doc [{:keys [arglists doc value] :as node}]
   (r/as-element [ui/list-item
-                 [:div.doc-wrapper
-                  value
-                  [:br]
-                  [:br]
-                  [:div.doc
-                   [:i (apply str (interpose ", " arglists))]
-                   [:br]
-                   [:span doc]]]]))
+                 (assoc node :primary-text
+                        (r/as-element [:div.doc-wrapper
+                                       value
+                                       [:div.doc {:style {:font-size "80%"}}
+                                        [:i (apply str (interpose ", " arglists))]
+                                        [:br]
+                                        doc]]))]))
 
 (defn node->element [editable? {:keys [nested-items] :as node}]
   (let [node (cond
